@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TRANSFERBIZ | футбольная платформа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #0e1622;
+            min-height: 100vh;
+        }
+        .app-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #0a1a2e;
+            color: white;
+            padding: 16px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #c9a03d;
+        }
+        .logo h1 {
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+        .logo p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        .user-info {
+            background: #1e2f44;
+            padding: 8px 18px;
+            border-radius: 40px;
+            display: flex;
+            gap: 15px;
+            align-items: baseline;
+        }
+        .side-menu {
+            background: #f5f7fc;
+            border-right: 1px solid #dce4ec;
+            width: 260px;
+            padding: 20px 0;
+        }
+        .side-menu a {
+            display: block;
+            padding: 12px 24px;
+            color: #1e4663;
+            text-decoration: none;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+        .side-menu a.active {
+            background: #e9eef5;
+            border-left-color: #c9a03d;
+            font-weight: 700;
+        }
+        .flex-row {
+            display: flex;
+            flex: 1;
+        }
+        .content-area {
+            flex: 1;
+            padding: 24px 28px;
+        }
+        .info-card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        button {
+            background: #1d4e6e;
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin: 4px;
+            font-weight: 500;
+        }
+        button.danger {
+            background: #8b3c2c;
+        }
+        button.success {
+            background: #2a6b4e;
+        }
+        input, select, textarea {
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e6;
+            margin: 4px;
+        }
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .league-table th, .league-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .club-btn {
+            background: #eef2f8;
+            color: #1e4663;
+            padding: 6px 14px;
+            margin: 4px;
+            border-radius: 40px;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .chat-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: #0a1a2e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 1200;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 320px;
+            height: 420px;
+            background: #1e2a36;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0);
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 1199;
+            pointer-events: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .chat-window.open {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .chat-header {
+            background: #0f212f;
+            padding: 12px;
+            border-radius: 24px 24px 0 0;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+        }
+        .chat-messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: #f8fafd;
+        }
+        .chat-input-row {
+            display: flex;
+            padding: 12px;
+            background: white;
+            border-radius: 0 0 24px 24px;
+            gap: 8px;
+        }
+        .chat-input-row input {
+            flex: 1;
+        }
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #0a1a2e;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .club-card {
+            background: #fafdff;
+            border-radius: 24px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .club-emblem {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+        .club-wallpaper {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .players-table th {
+            text-align: left;
+            background: #f0f3f8;
+            padding: 12px 8px;
+        }
+        .players-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eef2f7;
+        }
+        footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 0.7rem;
+            background: #fafcff;
+            border-top: 1px solid #eef2f5;
+        }
+        .sponsor-img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper" id="appRoot"></div>
+
+<script>
+    // ---------- КОНСТАНТЫ ----------
+    const BPL_CLUBS_ORIG = ["Skufoboys","Suslikbet","Zabrod","Yantitus","Gerrcelona","Mongols","Ghostiya","Tsukengaster","Rofler United","Reninburg United","Kat","Peygo's Brigade","Mordochkin Union","Tajnyj Il'ya","Gudanov City","Bounchester","Legion IX"];
+    const LEAGUE2_CLUBS_ORIG = ["Metropolitan 24","Fasolkaster","Imperial FC","Gaaga Musketeers","Stepanchuk","Vendi Vipers","Fomiva-Mitrich Albion","Griffins","Wilted Rose","Lashka Rovers","Lexus Galacticos","City Rom4ik","Aleksey Rangers","Kamil House","Red Eye Halil","Pony Hams","FC Grinanda","Stasgrad Giants","Bilyal Wanderers","Zhigul Glory"];
+    
+    let BPL_CLUBS = [...BPL_CLUBS_ORIG];
+    let LEAGUE2_CLUBS = [...LEAGUE2_CLUBS_ORIG];
+    
+    let currentUser = null;
+    let registeredUsers = [];
+    let clubsData = {};
+    let bplStats = {};
+    let matchResults = [];
+    let globalNews = ["Добро пожаловать в TRANSFERBIZ", "Старт сезона Бизарской Премьер Лиги", "Победа = 5 очков"];
+    let transferRumors = ["Лоренцо Лукка интерес из АПЛ", "Виньято продлевает контракт до 2029"];
+    let nationalTeams = { "Estonia": { coach: "T. Henn", ranking: 98, players: [] }, "Russia": { coach: "V. Karpin", ranking: 35, players: [] } };
+    
+    // расширенный спонсор с фото и длительностью
+    let sponsorsData = {};
+    
+    let cupBizaria = { participants: [], winners: [], supercup: { winner: "Skufoboys", year: 2025 } };
+    let wikiArticles = [{ title: "История БПЛ", content: "Основана в 2024 году. Победа = 5 очков, ничья = 3. Участники: 17 клубов.", author: "admin" }];
+    let chatMessages = ["Чат активен. Добро пожаловать!"];
+    let musicUrl = null;
+    let topScorers = [{ name: "Лоренцо Лукка", club: "Skufoboys", goals: 18 }, { name: "Трезольди", club: "Skufoboys", goals: 14 }];
+    let topAssists = [{ name: "Виньято", club: "Skufoboys", assists: 12 }, { name: "Кларк", club: "Skufoboys", assists: 9 }];
+    
+    // Сборная Бизарии
+    let bizariaTeam = { country: "Бизария", coach: "Главный тренер", players: [] };
+    
+    // ---------- СОХРАНЕНИЕ / ЗАГРУЗКА ЛОКАЛНО ----------
+    function saveAllLocal() {
+        localStorage.setItem("transferbiz_users", JSON.stringify(registeredUsers));
+        localStorage.setItem("transferbiz_clubs", JSON.stringify(clubsData));
+        localStorage.setItem("transferbiz_bpl_stats", JSON.stringify(bplStats));
+        localStorage.setItem("transferbiz_matches", JSON.stringify(matchResults));
+        localStorage.setItem("transferbiz_news", JSON.stringify(globalNews));
+        localStorage.setItem("transferbiz_rumors", JSON.stringify(transferRumors));
+        localStorage.setItem("transferbiz_national", JSON.stringify(nationalTeams));
+        localStorage.setItem("transferbiz_sponsors", JSON.stringify(sponsorsData));
+        localStorage.setItem("transferbiz_cup", JSON.stringify(cupBizaria));
+        localStorage.setItem("transferbiz_wiki", JSON.stringify(wikiArticles));
+        localStorage.setItem("transferbiz_chat", JSON.stringify(chatMessages));
+        localStorage.setItem("transferbiz_music", musicUrl);
+        localStorage.setItem("transferbiz_scorers", JSON.stringify(topScorers));
+        localStorage.setItem("transferbiz_assists", JSON.stringify(topAssists));
+        localStorage.setItem("transferbiz_bpl_clubs", JSON.stringify(BPL_CLUBS));
+        localStorage.setItem("transferbiz_league2_clubs", JSON.stringify(LEAGUE2_CLUBS));
+        localStorage.setItem("transferbiz_bizaria_team", JSON.stringify(bizariaTeam));
+    }
+    
+    function loadAllLocal() {
+        let u = localStorage.getItem("transferbiz_users"); if(u) registeredUsers = JSON.parse(u);
+        let c = localStorage.getItem("transferbiz_clubs"); if(c) clubsData = JSON.parse(c);
+        let s = localStorage.getItem("transferbiz_bpl_stats"); if(s) bplStats = JSON.parse(s);
+        let m = localStorage.getItem("transferbiz_matches"); if(m) matchResults = JSON.parse(m);
+        let n = localStorage.getItem("transferbiz_news"); if(n) globalNews = JSON.parse(n);
+        let r = localStorage.getItem("transferbiz_rumors"); if(r) transferRumors = JSON.parse(r);
+        let nat = localStorage.getItem("transferbiz_national"); if(nat) nationalTeams = JSON.parse(nat);
+        let sp = localStorage.getItem("transferbiz_sponsors"); if(sp) sponsorsData = JSON.parse(sp);
+        let cup = localStorage.getItem("transferbiz_cup"); if(cup) cupBizaria = JSON.parse(cup);
+        let wiki = localStorage.getItem("transferbiz_wiki"); if(wiki) wikiArticles = JSON.parse(wiki);
+        let ch = localStorage.getItem("transferbiz_chat"); if(ch) chatMessages = JSON.parse(ch);
+        let mu = localStorage.getItem("transferbiz_music"); musicUrl = mu;
+        let sc = localStorage.getItem("transferbiz_scorers"); if(sc) topScorers = JSON.parse(sc);
+        let as = localStorage.getItem("transferbiz_assists"); if(as) topAssists = JSON.parse(as);
+        let bplc = localStorage.getItem("transferbiz_bpl_clubs"); if(bplc) BPL_CLUBS = JSON.parse(bplc);
+        let l2c = localStorage.getItem("transferbiz_league2_clubs"); if(l2c) LEAGUE2_CLUBS = JSON.parse(l2c);
+        let bt = localStorage.getItem("transferbiz_bizaria_team"); if(bt) bizariaTeam = JSON.parse(bt);
+        
+        if(Object.keys(clubsData).length === 0) initClubs();
+        if(Object.keys(bplStats).length === 0) initStats();
+        if(Object.keys(sponsorsData).length === 0) initSponsors();
+        if(cupBizaria.participants.length === 0) cupBizaria.participants = [...BPL_CLUBS.slice(0,8)];
+        if(!cupBizaria.supercup) cupBizaria.supercup = { winner: "Skufoboys", year: 2025 };
+    }
+    
+    function initClubs() {
+        [...BPL_CLUBS, ...LEAGUE2_CLUBS].forEach(name => {
+            clubsData[name] = {
+                name, league: BPL_CLUBS.includes(name) ? "bpl" : "league2",
+                emblem: null, wallpaper: null, sponsor: "Нет спонсора", stadium: "Стадион", capacity: 0,
+                trophies: { bpl: false, lch: false, le: false, lk: false, cupBizaria: false, supercupBizaria: false },
+                players: [], youth: [], totalValue: 0
+            };
+        });
+        if(clubsData["Skufoboys"]) clubsData["Skufoboys"].players = [];
+        saveAllLocal();
+    }
+    
+    function initStats() {
+        BPL_CLUBS.forEach(c => {
+            bplStats[c] = { played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+        });
+        saveAllLocal();
+    }
+    
+    function initSponsors() {
+        [...BPL_CLUBS, ...LEAGUE2_CLUBS].forEach(c => {
+            sponsorsData[c] = { name: "Нет спонсора", amount: 0, duration: "2025-2026", photo: null };
+        });
+        saveAllLocal();
+    }
+    
+    function recalcPoints() {
+        for(let c in bplStats) {
+            bplStats[c].points = bplStats[c].wins * 5 + bplStats[c].draws * 3;
+        }
+        saveAllLocal();
+        if(window.saveToFirebase) window.saveToFirebase();
+    }
+    
+    // ---------- FIREBASE СИНХРОНИЗАЦИЯ ----------
+    let firebaseSyncEnabled = false;
+    
+    function saveToFirebase() {
+        if(!firebaseSyncEnabled || !window.db) return;
+        try {
+            set(ref(window.db, 'transferbiz/clubsData'), clubsData);
+            set(ref(window.db, 'transferbiz/bplStats'), bplStats);
+            set(ref(window.db, 'transferbiz/matchResults'), matchResults);
+            set(ref(window.db, 'transferbiz/globalNews'), globalNews);
+            set(ref(window.db, 'transferbiz/transferRumors'), transferRumors);
+            set(ref(window.db, 'transferbiz/sponsorsData'), sponsorsData);
+            set(ref(window.db, 'transferbiz/cupBizaria'), cupBizaria);
+            set(ref(window.db, 'transferbiz/wikiArticles'), wikiArticles);
+            set(ref(window.db, 'transferbiz/topScorers'), topScorers);
+            set(ref(window.db, 'transferbiz/topAssists'), topAssists);
+            set(ref(window.db, 'transferbiz/bizariaTeam'), bizariaTeam);
+            set(ref(window.db, 'transferbiz/chatMessages'), chatMessages);
+            console.log("Данные синхронизированы с Firebase");
+        } catch(e) { console.error("Ошибка синхронизации:", e); }
+    }
+    
+    function loadFromFirebase() {
+        if(!window.db) { console.log("Firebase не подключён"); return; }
+        firebaseSyncEnabled = true;
+        onValue(ref(window.db, 'transferbiz/clubsData'), (snapshot) => {
+            if(snapshot.exists()) { clubsData = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/bplStats'), (snapshot) => {
+            if(snapshot.exists()) { bplStats = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/matchResults'), (snapshot) => {
+            if(snapshot.exists()) { matchResults = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/globalNews'), (snapshot) => {
+            if(snapshot.exists()) { globalNews = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/transferRumors'), (snapshot) => {
+            if(snapshot.exists()) { transferRumors = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/sponsorsData'), (snapshot) => {
+            if(snapshot.exists()) { sponsorsData = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/cupBizaria'), (snapshot) => {
+            if(snapshot.exists()) { cupBizaria = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/wikiArticles'), (snapshot) => {
+            if(snapshot.exists()) { wikiArticles = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/topScorers'), (snapshot) => {
+            if(snapshot.exists()) { topScorers = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/topAssists'), (snapshot) => {
+            if(snapshot.exists()) { topAssists = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/bizariaTeam'), (snapshot) => {
+            if(snapshot.exists()) { bizariaTeam = snapshot.val(); saveAllLocal(); renderCurrentContent(); }
+        });
+        onValue(ref(window.db, 'transferbiz/chatMessages'), (snapshot) => {
+            if(snapshot.exists()) { chatMessages = snapshot.val(); saveAllLocal(); renderChat(); }
+        });
+    }
+    
+    function renderCurrentContent() {
+        let activeLink = document.querySelector(".side-menu a.active");
+        if(activeLink) renderContent(activeLink.getAttribute("data-section"));
+    }
+    
+    // ---------- АВТОРИЗАЦИЯ ----------
+    function showLogin() {
+        let html = `<div style="max-width:500px; margin:100px auto; background:white; border-radius:40px; padding:40px; text-align:center;">
+            <h2>TRANSFERBIZ</h2><p style="margin:15px 0;">Вход в платформу</p>
+            <input type="text" id="loginNick" placeholder="Ваш никнейм" style="width:100%;"><br>
+            <div style="margin:16px 0;"><label><input type="radio" name="role" value="user" checked> Посетитель</label> &nbsp;&nbsp;
+            <label><input type="radio" name="role" value="admin"> Администратор</label></div>
+            <div id="adminPwdDiv" style="display:none;"><input type="password" id="adminPwd" placeholder="Пароль администратора" style="width:100%;"></div>
+            <button id="loginBtn" style="margin-top:12px;">Войти</button>
+        </div>`;
+        document.getElementById("appRoot").innerHTML = html;
+        let radios = document.querySelectorAll("input[name='role']");
+        radios.forEach(r => r.addEventListener("change", () => {
+            document.getElementById("adminPwdDiv").style.display = r.value === "admin" ? "block" : "none";
+        }));
+        document.getElementById("loginBtn").onclick = () => {
+            let nick = document.getElementById("loginNick").value.trim();
+            let isAdmin = document.querySelector("input[name='role']:checked").value === "admin";
+            if(!nick) { alert("Введите никнейм"); return; }
+            if(isAdmin) {
+                let pwd = document.getElementById("adminPwd").value;
+                if(pwd !== "1888999469790885") { alert("Неверный пароль администратора"); return; }
+                let exist = registeredUsers.find(u => u.nickname === nick && u.role === "admin");
+                if(exist) currentUser = exist;
+                else { registeredUsers.push({ nickname: nick, role: "admin" }); currentUser = { nickname: nick, role: "admin" }; }
+            } else {
+                let exist = registeredUsers.find(u => u.nickname === nick);
+                if(exist) currentUser = exist;
+                else { registeredUsers.push({ nickname: nick, role: "user" }); currentUser = { nickname: nick, role: "user" }; }
+            }
+            saveAllLocal();
+            renderApp();
+        };
+    }
+    
+    // ---------- ОСНОВНАЯ ПРОРИСОВКА ----------
+    function renderApp() {
+        let menuHtml = `<div class="header"><div class="logo"><h1>TRANSFERBIZ</h1><p>Бизарская Премьер Лига</p></div>
+            <div class="user-info"><span>${currentUser.nickname}</span><span>${currentUser.role === "admin" ? "Админ" : "Посетитель"}</span><button id="logoutBtn">Выйти</button></div></div>
+            <div class="flex-row"><div class="side-menu" id="sideMenu"></div><div class="content-area" id="mainContent"></div></div>
+            <footer>TransferBiz · победа=5 очков, ничья=3 · все данные онлайн · синхронизация через Firebase</footer>`;
+        document.getElementById("appRoot").innerHTML = menuHtml;
+        
+        const menuMap = [
+            { key:"home", name:"Главная" }, { key:"bpl_table", name:"БПЛ таблица" }, { key:"matches", name:"Матчи" },
+            { key:"clubs", name:"Клубы" }, { key:"transfers", name:"Слухи" }, { key:"national", name:"Сборные" },
+            { key:"bizaria", name:"Сборная Бизарии" }, { key:"sponsors", name:"Спонсоры" }, { key:"cup", name:"Кубок Бизарии" },
+            { key:"supercup", name:"Суперкубок" }, { key:"wiki", name:"Вики" }, { key:"top_stats", name:"Топ игроки" }
+        ];
+        if(currentUser.role === "admin") menuMap.push({ key:"admin", name:"Админ-панель" });
+        let menuDiv = document.getElementById("sideMenu");
+        menuMap.forEach(item => {
+            let a = document.createElement("a");
+            a.innerText = item.name;
+            a.setAttribute("data-section", item.key);
+            a.onclick = (e) => {
+                e.preventDefault();
+                document.querySelectorAll(".side-menu a").forEach(l => l.classList.remove("active"));
+                a.classList.add("active");
+                renderContent(item.key);
+            };
+            menuDiv.appendChild(a);
+        });
+        
+        // чат
+        let chatFab = document.createElement("div"); chatFab.className = "chat-fab"; chatFab.innerText = "💬";
+        let chatWin = document.createElement("div"); chatWin.className = "chat-window";
+        chatWin.innerHTML = `<div class="chat-header"><span>⚡ ЧАТ TRANSFERBIZ</span><button id="closeChat" style="background:none; font-size:1.2rem;">✕</button></div>
+            <div class="chat-messages-area" id="chatMsgs"></div>
+            <div class="chat-input-row"><input id="chatInput" placeholder="Ваше сообщение..."><button id="sendChat">➤</button></div>`;
+        document.body.appendChild(chatFab); document.body.appendChild(chatWin);
+        chatFab.onclick = () => chatWin.classList.toggle("open");
+        document.getElementById("closeChat").onclick = () => chatWin.classList.remove("open");
+        document.getElementById("sendChat").onclick = () => {
+            let inp = document.getElementById("chatInput");
+            if(inp.value.trim()) {
+                chatMessages.push(`${currentUser.nickname}: ${inp.value}`);
+                if(chatMessages.length > 50) chatMessages.shift();
+                saveAllLocal();
+                if(window.saveToFirebase) saveToFirebase();
+                renderChat();
+                inp.value = "";
+            }
+        };
+        renderChat();
+        
+        // музыка
+        if(musicUrl) {
+            let musicDiv = document.createElement("div"); musicDiv.className = "music-player";
+            musicDiv.innerHTML = `<audio controls style="height:35px;" autoplay loop><source src="${musicUrl}" type="audio/mpeg"></audio>${currentUser.role==="admin"?`<button id="clearMusicBtn" style="background:#5a3a2a;">❌</button>`:""}`;
+            document.body.appendChild(musicDiv);
+            if(currentUser.role==="admin") document.getElementById("clearMusicBtn")?.addEventListener("click",()=>{ musicUrl=null; saveAllLocal(); renderApp(); });
+        }
+        document.getElementById("logoutBtn").onclick = () => { currentUser = null; showLogin(); };
+        renderContent("home");
+    }
+    
+    function renderChat() { let c=document.getElementById("chatMsgs"); if(c) c.innerHTML = chatMessages.map(m=>`<div style="padding:5px 0; border-bottom:1px solid #e2e8f0;">💬 ${m}</div>`).join(''); }
+    
+    // ---------- КОНТЕНТ ----------
+    function renderContent(section) {
+        let div = document.getElementById("mainContent");
+        if(!div) return;
+        
+        if(section === "home") {
+            div.innerHTML = `<div class="info-card"><h3>Главные новости</h3>${globalNews.map(n=>`<div style="padding:8px 0; border-bottom:1px solid #eef2f5;">📌 ${n}</div>`).join('')}</div>`;
+        }
+        else if(section === "bpl_table") {
+            let sorted = [...BPL_CLUBS].sort((a,b)=>(bplStats[b]?.points||0)-(bplStats[a]?.points||0));
+            let html = `<div class="info-card"><h3>БИЗАРСКАЯ ПРЕМЬЕР ЛИГА (победа=5, ничья=3)</h3><table class="league-table"><thead><tr><th>#</th><th>Клуб</th><th>И</th><th>В</th><th>Н</th><th>П</th><th>З</th><th>П</th><th>О</th></tr></thead><tbody>`;
+            sorted.forEach((c,idx)=>{
+                let s = bplStats[c] || {played:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0,points:0};
+                html += `<tr><td>${idx+1}</td><td><span class="club-btn" onclick="window.showClubDetailDirect('${c}')">${c}</span></td>
+                        <td>${s.played}</td><td>${s.wins}</td><td>${s.draws}</td><td>${s.losses}</td>
+                        <td>${s.goalsFor}</td><td>${s.goalsAgainst}</td><td><b>${s.points}</b></td></tr>`;
+            });
+            html += `</tbody></table></div>`;
+            div.innerHTML = html;
+            window.showClubDetailDirect = (club) => showClubCard(club);
+        }
+        else if(section === "matches" && currentUser.role === "admin") {
+            div.innerHTML = `<div class="info-card"><h3>Ввод результатов матчей (БПЛ)</h3>
+                <select id="matchHome">${BPL_CLUBS.map(c=>`<option>${c}</option>`).join('')}</select>
+                <select id="matchAway">${BPL_CLUBS.map(c=>`<option>${c}</option>`).join('')}</select>
+                <input id="scoreHome" placeholder="0" style="width:60px;"> : <input id="scoreAway" placeholder="0" style="width:60px;">
+                <button id="addMatchBtn">➕ Добавить результат</button>
+                <h4 style="margin-top:20px;">История матчей</h4><div id="matchHistoryList"></div></div>`;
+            document.getElementById("addMatchBtn").onclick = () => {
+                let home = document.getElementById("matchHome").value;
+                let away = document.getElementById("matchAway").value;
+                let hg = parseInt(document.getElementById("scoreHome").value) || 0;
+                let ag = parseInt(document.getElementById("scoreAway").value) || 0;
+                if(home === away) { alert("Выберите разных соперников"); return; }
+                let h = bplStats[home], a = bplStats[away];
+                h.played++; a.played++;
+                h.goalsFor += hg; h.goalsAgainst += ag;
+                a.goalsFor += ag; a.goalsAgainst += hg;
+                if(hg > ag) { h.wins++; a.losses++; }
+                else if(ag > hg) { a.wins++; h.losses++; }
+                else { h.draws++; a.draws++; }
+                recalcPoints();
+                matchResults.unshift(`${home} ${hg}:${ag} ${away}`);
+                saveAllLocal();
+                saveToFirebase();
+                renderContent("matches");
+            };
+            let histDiv = document.getElementById("matchHistoryList");
+            if(histDiv) histDiv.innerHTML = matchResults.map(m=>`<div style="padding:6px 0;">⚽ ${m}</div>`).join('');
+        }
+        else if(section === "clubs") {
+            div.innerHTML = `<div class="info-card"><h3>Клубы БПЛ</h3>${BPL_CLUBS.map(c=>`<button onclick="window.showClubDetailDirect('${c}')">${c}</button>`).join('')}<h3>2 лига</h3>${LEAGUE2_CLUBS.map(c=>`<button onclick="window.showClubDetailDirect('${c}')">${c}</button>`).join('')}<div id="clubDetailContainer"></div></div>`;
+            window.showClubDetailDirect = (club) => showClubCard(club);
+        }
+        else if(section === "transfers") {
+            div.innerHTML = `<div class="info-card"><h3>Трансферные слухи</h3>${transferRumors.map(r=>`<div>🔁 ${r}</div>`).join('')}${currentUser.role==="admin"?`<div style="margin-top:16px;"><input id="newRumorField" placeholder="Новый слух..."><button id="addRumorBtn">Добавить</button></div>`:""}</div>`;
+            if(currentUser.role==="admin") document.getElementById("addRumorBtn")?.addEventListener("click",()=>{ let inp=document.getElementById("newRumorField"); if(inp.value){ transferRumors.unshift(inp.value); saveAllLocal(); saveToFirebase(); renderContent("transfers"); } });
+        }
+        else if(section === "national") {
+            let html = `<div class="info-card"><h3>Сборные мира</h3><table class="league-table"><thead><tr><th>Страна</th><th>Рейтинг FIFA</th><th>Главный тренер</th></tr></thead><tbody>`;
+            for(let c in nationalTeams) {
+                html += `<tr><td>${c}</td><td>${nationalTeams[c].ranking}</td><td>${nationalTeams[c].coach}</td></tr>`;
+            }
+            html += `</tbody></table></div>`;
+            div.innerHTML = html;
+        }
+        else if(section === "bizaria") {
+            let team = bizariaTeam;
+            let playersHtml = `<div class="info-card"><h3>СБОРНАЯ БИЗАРИИ</h3>
+                <p><strong>Страна:</strong> ${team.country}</p>
+                <div><strong>Тренер:</strong> 
+                    ${currentUser?.role === "admin" ? 
+                        `<input type="text" id="coachInput" value="${team.coach}" style="width:200px;"> 
+                         <button id="saveCoachBtn">Сохранить тренера</button>` : 
+                        team.coach}
+                </div>
+                <h4 style="margin-top:20px;">Состав (${team.players.length} игроков)</h4>
+                <table class="league-table" style="width:100%">
+                    <thead><tr><th>Имя</th><th>Позиция</th><th>Клуб</th>${currentUser?.role === "admin" ? "<th>Действие</th>" : ""} </thead>
+                    <tbody id="bizariaPlayersList">`;
+            team.players.forEach((p, idx) => {
+                playersHtml += `<tr>
+                    <td>${p.name}</td>
+                    <td>${p.position}</td>
+                    <td>${p.club || "—"}</td>
+                    ${currentUser?.role === "admin" ? `<td><button onclick="removeBizariaPlayer(${idx})">🗑️ Удалить</button></td>` : ""}
+                </tr>`;
+            });
+            playersHtml += `</tbody></table>`;
+            if(currentUser?.role === "admin") {
+                playersHtml += `<div style="margin-top:20px; padding:16px; background:#f0f3f8; border-radius:24px;">
+                    <h4>➕ Добавить игрока в сборную</h4>
+                    <input type="text" id="newBizariaPlayerName" placeholder="Имя игрока" style="width:150px;">
+                    <input type="text" id="newBizariaPlayerPos" placeholder="Позиция" style="width:120px;">
+                    <input type="text" id="newBizariaPlayerClub" placeholder="Клуб" style="width:120px;">
+                    <button id="addBizariaPlayerBtn">Добавить игрока</button>
+                </div>`;
+            }
+            playersHtml += `</div>`;
+            div.innerHTML = playersHtml;
+            
+            if(currentUser?.role === "admin") {
+                document.getElementById("saveCoachBtn")?.addEventListener("click", () => {
+                    let newCoach = document.getElementById("coachInput").value;
+                    bizariaTeam.coach = newCoach;
+                    saveAllLocal();
+                    saveToFirebase();
+                    renderContent("bizaria");
+                });
+                document.getElementById("addBizariaPlayerBtn")?.addEventListener("click", () => {
+                    let name = document.getElementById("newBizariaPlayerName").value;
+                    let pos = document.getElementById("newBizariaPlayerPos").value;
+                    let club = document.getElementById("newBizariaPlayerClub").value;
+                    if(name && pos) {
+                        bizariaTeam.players.push({ name, position: pos, club: club || "—" });
+                        saveAllLocal();
+                        saveToFirebase();
+                        renderContent("bizaria");
+                    }
+                });
+            }
+            window.removeBizariaPlayer = (idx) => {
+                bizariaTeam.players.splice(idx, 1);
+                saveAllLocal();
+                saveToFirebase();
+                renderContent("bizaria");
+            };
+        }
+        else if(section === "sponsors") {
+            let spHtml = `<div class="info-card"><h3>Спонсоры клубов</h3><table class="league-table"><thead><tr><th>Клуб</th><th>Спонсор</th><th>Сумма (млн €)</th><th>Длительность</th>${currentUser.role==="admin"?"<th>Действие</th>":""} </thead><tbody>`;
+            for(let c in sponsorsData) {
+                let sp = sponsorsData[c];
+                spHtml += `<tr>
+                    <td>${c}</td>
+                    <td>${currentUser.role==="admin" ? `<input id="spName_${c}" value="${sp.name}" style="width:120px;">` : sp.name}</td>
+                    <td>${currentUser.role==="admin" ? `<input id="spAmount_${c}" value="${sp.amount}" style="width:70px;">` : sp.amount}</td>
+                    <td>${currentUser.role==="admin" ? `<input id="spDur_${c}" value="${sp.duration}" style="width:100px;">` : sp.duration}</td>
+                    ${currentUser.role==="admin" ? `<td><button onclick="updateSponsorData('${c}')">Сохранить</button></td>` : ""}
+                </tr>`;
+            }
+            spHtml += `</tbody></table></div>`;
+            div.innerHTML = spHtml;
+            if(currentUser.role==="admin") window.updateSponsorData = (club) => {
+                let name = document.getElementById(`spName_${club}`).value;
+                let amount = parseFloat(document.getElementById(`spAmount_${club}`).value);
+                let duration = document.getElementById(`spDur_${club}`).value;
+                sponsorsData[club] = { ...sponsorsData[club], name, amount, duration };
+                saveAllLocal();
+                saveToFirebase();
+                renderContent("sponsors");
+            };
+        }
+        else if(section === "cup") {
+            div.innerHTML = `<div class="info-card"><h3>Кубок Бизарии</h3>
+                <p><strong>Участники текущего сезона:</strong> ${cupBizaria.participants.join(", ")}</p>
+                <p><strong>Победители прошлых лет:</strong> ${cupBizaria.winners.map(w=>`${w.year} - ${w.club}`).join(", ") || "—"}</p>
+                ${currentUser.role==="admin" ? `
+                    <div style="margin-top:16px;"><input id="newWinnerClub" placeholder="Клуб"><input id="newWinnerYear" placeholder="Год"><button id="addWinnerBtn">➕ Добавить победителя</button>
+                    <br><br><input id="newParticipant" placeholder="Новый участник"><button id="addParticipantBtn">Добавить участника</button></div>
+                ` : ""}
+            </div>`;
+            if(currentUser.role==="admin") {
+                document.getElementById("addWinnerBtn")?.addEventListener("click",()=>{
+                    let club = document.getElementById("newWinnerClub").value;
+                    let year = document.getElementById("newWinnerYear").value;
+                    if(club && year) { cupBizaria.winners.push({ club, year }); saveAllLocal(); saveToFirebase(); renderContent("cup"); }
+                });
+                document.getElementById("addParticipantBtn")?.addEventListener("click",()=>{
+                    let club = document.getElementById("newParticipant").value;
+                    if(club && !cupBizaria.participants.includes(club)) { cupBizaria.participants.push(club); saveAllLocal(); saveToFirebase(); renderContent("cup"); }
+                });
+            }
+        }
+        else if(section === "supercup") {
+            div.innerHTML = `<div class="info-card"><h3>Суперкубок Бизарии</h3>
+                <p><strong>Обладатель:</strong> ${cupBizaria.supercup?.winner || "—"} (год: ${cupBizaria.supercup?.year || "—"})</p>
+                ${currentUser.role==="admin" ? `
+                    <div><input id="newSuperWinner" placeholder="Клуб-победитель" value="${cupBizaria.supercup?.winner||""}">
+                    <input id="newSuperYear" placeholder="Год" value="${cupBizaria.supercup?.year||""}">
+                    <button id="updateSuperBtn">Обновить</button></div>
+                ` : ""}
+            </div>`;
+            if(currentUser.role==="admin") {
+                document.getElementById("updateSuperBtn")?.addEventListener("click",()=>{
+                    let w = document.getElementById("newSuperWinner").value;
+                    let y = document.getElementById("newSuperYear").value;
+                    if(w && y) { cupBizaria.supercup = { winner: w, year: parseInt(y) }; saveAllLocal(); saveToFirebase(); renderContent("supercup"); }
+                });
+            }
+        }
+        else if(section === "wiki") {
+            let wikiHtml = `<div class="info-card"><h3>Википедия лиги</h3>`;
+            wikiArticles.forEach((a,idx) => {
+                wikiHtml += `<div style="margin-bottom:20px; border:1px solid #eef2f5; padding:16px; border-radius:20px;">
+                    <b>${a.title}</b><p>${a.content}</p><i>Автор: ${a.author}</i>
+                    ${currentUser.role==="admin" ? `<div style="margin-top:8px;"><button onclick="editWikiArticle(${idx})">✏️ Редактировать</button><button onclick="deleteWikiArticle(${idx})">🗑️ Удалить</button></div>` : ""}
+                </div>`;
+            });
+            wikiHtml += `${currentUser.role==="admin" ? `<button id="addWikiBtn">➕ Добавить статью</button>` : ""}</div>`;
+            div.innerHTML = wikiHtml;
+            if(currentUser.role==="admin") {
+                window.editWikiArticle = (idx) => {
+                    let newTitle = prompt("Новый заголовок", wikiArticles[idx].title);
+                    let newContent = prompt("Новое содержание", wikiArticles[idx].content);
+                    if(newTitle && newContent) { wikiArticles[idx].title = newTitle; wikiArticles[idx].content = newContent; saveAllLocal(); saveToFirebase(); renderContent("wiki"); }
+                };
+                window.deleteWikiArticle = (idx) => { wikiArticles.splice(idx,1); saveAllLocal(); saveToFirebase(); renderContent("wiki"); };
+                document.getElementById("addWikiBtn").onclick = () => {
+                    let t = prompt("Заголовок статьи"); let c = prompt("Содержание");
+                    if(t && c) { wikiArticles.push({ title:t, content:c, author:currentUser.nickname }); saveAllLocal(); saveToFirebase(); renderContent("wiki"); }
+                };
+            }
+        }
+        else if(section === "top_stats") {
+            div.innerHTML = `<div class="info-card"><h3>Топ-5 бомбардиров</h3><table class="league-table"><thead><tr><th>Игрок</th><th>Клуб</th><th>Голы</th></tr></thead><tbody>${topScorers.slice(0,5).map(s=>`<tr><td>${s.name}</td><td>${s.club}</td><td>${s.goals}</td></tr>`).join('')}</tbody></table>
+            <h3>Топ-5 ассистентов</h3><table class="league-table"><thead><tr><th>Игрок</th><th>Клуб</th><th>Пасы</th></tr></thead><tbody>${topAssists.slice(0,5).map(s=>`<tr><td>${s.name}</td><td>${s.club}</td><td>${s.assists}</td></tr>`).join('')}</tbody></table>
+            ${currentUser.role==="admin"?`<div style="margin-top:24px;"><h4>Добавить игрока</h4><input id="statName" placeholder="Имя"><input id="statClub" placeholder="Клуб"><input id="statValue" placeholder="Голы/пасы"><button id="addScorerBtn">Бомбардир</button><button id="addAssistBtn">Ассистент</button></div>`:""}</div>`;
+            if(currentUser.role==="admin") {
+                document.getElementById("addScorerBtn")?.addEventListener("click",()=>{ let n=document.getElementById("statName").value, c=document.getElementById("statClub").value, g=parseInt(document.getElementById("statValue").value); if(n&&c&&g){ topScorers.push({name:n,club:c,goals:g}); topScorers.sort((a,b)=>b.goals-a.goals); saveAllLocal(); saveToFirebase(); renderContent("top_stats"); } });
+                document.getElementById("addAssistBtn")?.addEventListener("click",()=>{ let n=document.getElementById("statName").value, c=document.getElementById("statClub").value, a=parseInt(document.getElementById("statValue").value); if(n&&c&&a){ topAssists.push({name:n,club:c,assists:a}); topAssists.sort((a,b)=>b.assists-a.assists); saveAllLocal(); saveToFirebase(); renderContent("top_stats"); } });
+            }
+        }
+        else if(section === "admin" && currentUser.role === "admin") {
+            div.innerHTML = `<div class="info-card"><h3>Администрирование</h3>
+                <button id="addNewsAdminBtn">Добавить новость</button>
+                <button id="uploadMusicAdminBtn">Загрузить музыку (MP3)</button>
+                <input type="file" id="musicFileInput" accept="audio/mpeg" style="display:none">
+                <div style="margin:24px 0;"><h4>Переместить клуб между лигами (drag & drop)</h4>
+                <div id="bplDragZone" style="background:#eef2f8; border-radius:20px; padding:12px; margin:8px 0;"><b>🏆 БПЛ</b><div id="bplDraggableList" style="min-height:80px;"></div></div>
+                <div id="l2DragZone" style="background:#f8f2e8; border-radius:20px; padding:12px; margin:8px 0;"><b>📌 2 лига</b><div id="l2DraggableList" style="min-height:80px;"></div></div>
+                </div>
+                <button id="resetDataBtn" class="danger">СБРОС ВСЕХ ДАННЫХ</button>
+                </div>`;
+            function renderDragDrop() {
+                let bplDiv = document.getElementById("bplDraggableList"); if(bplDiv) bplDiv.innerHTML = BPL_CLUBS.map(c=>`<div draggable="true" data-club="${c}" style="background:#1d4e6e; color:white; padding:6px 12px; margin:6px; border-radius:40px; display:inline-block; cursor:grab;">${c}</div>`).join('');
+                let l2Div = document.getElementById("l2DraggableList"); if(l2Div) l2Div.innerHTML = LEAGUE2_CLUBS.map(c=>`<div draggable="true" data-club="${c}" style="background:#6b4c2c; color:white; padding:6px 12px; margin:6px; border-radius:40px; display:inline-block; cursor:grab;">${c}</div>`).join('');
+                document.querySelectorAll("[draggable=true]").forEach(el => {
+                    el.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", el.getAttribute("data-club")));
+                });
+                document.getElementById("bplDragZone").addEventListener("dragover", e => e.preventDefault());
+                document.getElementById("l2DragZone").addEventListener("dragover", e => e.preventDefault());
+                document.getElementById("bplDragZone").addEventListener("drop", e => { e.preventDefault(); let club = e.dataTransfer.getData("text/plain"); moveClubBetweenLeagues(club, "bpl"); });
+                document.getElementById("l2DragZone").addEventListener("drop", e => { e.preventDefault(); let club = e.dataTransfer.getData("text/plain"); moveClubBetweenLeagues(club, "league2"); });
+            }
+            window.moveClubBetweenLeagues = (club, target) => {
+                if(BPL_CLUBS.includes(club) && target === "league2") { BPL_CLUBS = BPL_CLUBS.filter(c=>c!==club); LEAGUE2_CLUBS.push(club); }
+                else if(LEAGUE2_CLUBS.includes(club) && target === "bpl") { LEAGUE2_CLUBS = LEAGUE2_CLUBS.filter(c=>c!==club); BPL_CLUBS.push(club); }
+                else return;
+                initStats(); initSponsors(); saveAllLocal(); saveToFirebase(); renderContent("admin");
+            };
+            setTimeout(renderDragDrop, 30);
+            document.getElementById("addNewsAdminBtn").onclick = () => { let t=prompt("Введите новость:"); if(t){ globalNews.unshift(t); saveAllLocal(); saveToFirebase(); alert("Новость добавлена"); } };
+            document.getElementById("uploadMusicAdminBtn").onclick = () => document.getElementById("musicFileInput").click();
+            document.getElementById("musicFileInput").onchange = e => { let f=e.target.files[0]; if(f){ let url=URL.createObjectURL(f); musicUrl=url; saveAllLocal(); renderApp(); } };
+            document.getElementById("resetDataBtn").onclick = () => { if(confirm("Удалить ВСЕ данные?")){ localStorage.clear(); location.reload(); } };
+        }
+    }
+    
+    // КАРТОЧКА КЛУБА
+    function showClubCard(clubName) {
+        let club = clubsData[clubName];
+        if(!club) return;
+        let playersHtml = `<h4>Основной состав (${club.players.length}/50)</h4><table class="players-table"><thead><tr><th>Имя</th><th>Позиция</th><th>Возраст</th><th>Национальность</th><th>Стоимость (млн €)</th></tr></thead><tbody>`;
+        club.players.forEach(p => {
+            playersHtml += `<tr><td>${p.name||"—"}</td><td>${p.position||"—"}</td><td>${p.age||"—"}</td><td>${p.nationality||"—"}</td><td>${p.value||0}</td></tr>`;
+        });
+        playersHtml += `</tbody></table>`;
+        if(currentUser.role === "admin") {
+            playersHtml += `<div style="margin-top:16px;"><input id="newPlayerName" placeholder="Имя"><input id="newPlayerPos" placeholder="Поз."><input id="newPlayerAge" placeholder="Возраст"><input id="newPlayerNat" placeholder="Нац."><input id="newPlayerVal" placeholder="Стоимость"><button onclick="addPlayerToClub('${clubName}')">Добавить</button></div>`;
+            playersHtml += `<div><h4>Эмблема / Обои</h4><input type="file" id="emblemFile"><button onclick="uploadEmblemFor('${clubName}')">Эмблема</button> <input type="file" id="wallpaperFile"><button onclick="uploadWallpaperFor('${clubName}')">Обои</button></div>`;
+        }
+        let emblemHtml = club.emblem ? `<img src="${club.emblem}" class="club-emblem">` : "";
+        let wallpaperHtml = club.wallpaper ? `<img src="${club.wallpaper}" class="club-wallpaper">` : "";
+        let modal = document.createElement("div");
+        modal.style.position="fixed"; modal.style.top=0; modal.style.left=0; modal.style.width="100%"; modal.style.height="100%"; modal.style.background="rgba(0,0,0,0.85)"; modal.style.zIndex=2000; modal.style.overflow="auto";
+        modal.innerHTML = `<div style="background:white; max-width:800px; margin:40px auto; border-radius:40px; padding:24px;">${wallpaperHtml}<div style="display:flex; gap:16px; align-items:center;">${emblemHtml}<h2>${clubName}</h2></div><p>Спонсор: ${club.sponsor} | Стадион: ${club.stadium}</p>${playersHtml}<button style="margin-top:20px;" onclick="this.parentElement.parentElement.remove()">Закрыть</button></div>`;
+        document.body.appendChild(modal);
+        window.addPlayerToClub = (cn) => {
+            let player = {
+                name: document.getElementById("newPlayerName")?.value || "Новичок",
+                position: document.getElementById("newPlayerPos")?.value || "—",
+                age: document.getElementById("newPlayerAge")?.value || "—",
+                nationality: document.getElementById("newPlayerNat")?.value || "—",
+                value: parseFloat(document.getElementById("newPlayerVal")?.value) || 0
+            };
+            clubsData[cn].players.push(player);
+            clubsData[cn].totalValue = clubsData[cn].players.reduce((s,p)=>s+(p.value||0),0);
+            saveAllLocal();
+            saveToFirebase();
+            showClubCard(cn);
+        };
+        window.uploadEmblemFor = (cn) => { let f=document.getElementById("emblemFile")?.files[0]; if(f){ let r=new FileReader(); r.onload=e=>{ clubsData[cn].emblem=e.target.result; saveAllLocal(); saveToFirebase(); showClubCard(cn); }; r.readAsDataURL(f); } };
+        window.uploadWallpaperFor = (cn) => { let f=document.getElementById("wallpaperFile")?.files[0]; if(f){ let r=new FileReader(); r.onload=e=>{ clubsData[cn].wallpaper=e.target.result; saveAllLocal(); saveToFirebase(); showClubCard(cn); }; r.readAsDataURL(f); } };
+    }
+    
+    loadAllLocal();
+    if(!currentUser) showLogin(); else renderApp();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAA4bsmQjr3TyJCzPb_0CTVcq5MXEUAHXQ",
+    authDomain: "real-d33a5.firebaseapp.com",
+    projectId: "real-d33a5",
+    storageBucket: "real-d33a5.firebasestorage.app",
+    messagingSenderId: "708739630831",
+    appId: "1:708739630831:web:16da1cc219f773033f7d1a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  window.db = db;
+  window.ref = ref;
+  window.set = set;
+  window.onValue = onValue;
+  window.push = push;
+  
+  if(window.loadFromFirebase) window.loadFromFirebase();
+  window.saveToFirebase = function() {
+      if(window.clubsData) {
+          set(ref(db, 'transferbiz/clubsData'), window.clubsData);
+          set(ref(db, 'transferbiz/bplStats'), window.bplStats);
+          set(ref(db, 'transferbiz/matchResults'), window.matchResults);
+          set(ref(db, 'transferbiz/globalNews'), window.globalNews);
+          set(ref(db, 'transferbiz/transferRumors'), window.transferRumors);
+          set(ref(db, 'transferbiz/sponsorsData'), window.sponsorsData);
+          set(ref(db, 'transferbiz/cupBizaria'), window.cupBizaria);
+          set(ref(db, 'transferbiz/wikiArticles'), window.wikiArticles);
+          set(ref(db, 'transferbiz/topScorers'), window.topScorers);
+          set(ref(db, 'transferbiz/topAssists'), window.topAssists);
+          set(ref(db, 'transferbiz/bizariaTeam'), window.bizariaTeam);
+          set(ref(db, 'transferbiz/chatMessages'), window.chatMessages);
+      }
+  };
+  
+  window.loadFromFirebase = function() {
+      onValue(ref(db, 'transferbiz/clubsData'), (snapshot) => { if(snapshot.exists()) { window.clubsData = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/bplStats'), (snapshot) => { if(snapshot.exists()) { window.bplStats = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/matchResults'), (snapshot) => { if(snapshot.exists()) { window.matchResults = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/globalNews'), (snapshot) => { if(snapshot.exists()) { window.globalNews = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/transferRumors'), (snapshot) => { if(snapshot.exists()) { window.transferRumors = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/sponsorsData'), (snapshot) => { if(snapshot.exists()) { window.sponsorsData = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/cupBizaria'), (snapshot) => { if(snapshot.exists()) { window.cupBizaria = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/wikiArticles'), (snapshot) => { if(snapshot.exists()) { window.wikiArticles = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/topScorers'), (snapshot) => { if(snapshot.exists()) { window.topScorers = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/topAssists'), (snapshot) => { if(snapshot.exists()) { window.topAssists = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/bizariaTeam'), (snapshot) => { if(snapshot.exists()) { window.bizariaTeam = snapshot.val(); window.saveAllLocal(); window.renderCurrentContent(); } });
+      onValue(ref(db, 'transferbiz/chatMessages'), (snapshot) => { if(snapshot.exists()) { window.chatMessages = snapshot.val(); window.saveAllLocal(); window.renderChat(); } });
+  };
+  
+  setTimeout(() => { if(window.loadFromFirebase) window.loadFromFirebase(); }, 500);
+</script>
+</body>
+</html>
